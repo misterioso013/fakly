@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fakly - Gerador de FAQs Elegantes</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <h1>📋 Fakly - Gerador de FAQs</h1>
+
+    <div class="container">
+      <div class="editor">
+        <div class="input-group">
+          <label>Título do FAQ</label>
+          <input
+            type="text"
+            id="faqTitle"
+            placeholder="Ex: Dúvidas frequentes"
+          />
+        </div>
+        <button class="clear-btn" onclick="clearSavedData()">🗑️ Limpar dados salvos</button>
+
+        <div id="qaContainer">
+          <div class="qa-item">
+            <button class="remove-btn" onclick="removeQA(this)">×</button>
+            <div class="input-group">
+              <label>Pergunta</label>
+              <input
+                type="text"
+                class="question"
+                placeholder="Digite a pergunta"
+              />
+            </div>
+            <div class="input-group">
+              <label>Resposta</label>
+              <textarea
+                class="answer"
+                placeholder="Digite a resposta"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <button class="add-btn" onclick="addQA()">➕ Adicionar Pergunta</button>
+      </div>
+
+      <div class="preview">
+        <h3>Pré-visualização</h3>
+        <script src="faq-widget.js"></script>
+        <div id="preview"></div>
+
+        <h3 style="margin-top: 2rem">Código para Embedar</h3>
+        <div class="copy-code">
+          <button id="copyBtn" onclick="copyCode()">📋 Copiar Código</button>
+          <div class="code-snippet">
+            <pre><code id="generatedCode"></code></pre>
+          </div>
+          <p id="copyMessage" class="hidden">Código copiado!</p>
+      </div>
+    </div>
+    <footer>
+      <p>
+        Criado com ❤️ por
+        <a href="https://github.com/misterioso013/fakly">misterioso013</a>
+      </p>
+    </footer>
+    <script src="main.js"></script>
+  </body>
+</html>
