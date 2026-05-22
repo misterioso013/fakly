@@ -1,71 +1,180 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fakly - Gerador de FAQs Elegantes</title>
-    <meta name="description" content="Fakly - Gerador de FAQs Elegantes" />
-    <meta name="keywords" content="FAQ, Gerador de FAQ, FAQ Elegante" />
+    <title>Fakly - Gerador de FAQ Grátis e Open Source | Crie FAQs Elegantes</title>
+    <meta
+      name="description"
+      content="Fakly é um gerador de FAQ gratuito e open source. Crie perguntas frequentes elegantes com widget incorporável, schema SEO e design responsivo. Sem cadastro, sem limites."
+    />
+    <meta
+      name="keywords"
+      content="gerador de FAQ, FAQ grátis, FAQ generator, perguntas frequentes, widget FAQ, FAQ open source, criar FAQ, FAQ para site, FAQ SEO, schema FAQ, FAQ responsivo, FAQ acessível"
+    />
     <meta name="author" content="Rosiel Victor" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://misterioso013.github.io/fakly/" />
+
+    <meta
+      property="og:title"
+      content="Fakly - Gerador de FAQ Grátis e Open Source"
+    />
+    <meta
+      property="og:description"
+      content="Crie FAQs elegantes e incorporáveis com schema SEO. Gratuito, sem cadastro, open source."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://misterioso013.github.io/fakly/" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="Fakly" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Fakly - Gerador de FAQ Grátis e Open Source"
+    />
+    <meta
+      name="twitter:description"
+      content="Crie FAQs elegantes e incorporáveis com schema SEO. Gratuito, sem cadastro, open source."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Fakly",
+        "url": "https://misterioso013.github.io/fakly/",
+        "description": "Gerador de FAQ gratuito e open source. Crie perguntas frequentes elegantes com widget incorporável, schema SEO e design responsivo.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Rosiel Victor",
+          "url": "https://github.com/misterioso013"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true
+      }
+    </script>
+
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>📋 Fakly - Gerador de FAQs</h1>
+    <header>
+      <h1>📋 Fakly - Gerador de FAQs</h1>
+      <p class="subtitle">
+        Crie FAQs elegantes e incorporáveis — <strong>grátis</strong>,
+        <strong>open source</strong> e com
+        <strong>schema SEO</strong> integrado.
+      </p>
+    </header>
 
-    <div class="container">
-      <div class="editor">
+    <main class="container">
+      <section class="editor" aria-label="Editor de FAQ">
+        <h2 class="sr-only">Editor</h2>
         <div class="input-group">
-          <label>Título do FAQ</label>
+          <label for="faqTitle">Título do FAQ</label>
           <input
             type="text"
             id="faqTitle"
             placeholder="Ex: Dúvidas frequentes"
           />
         </div>
-        <button class="clear-btn" onclick="clearSavedData()">🗑️ Limpar dados salvos</button>
+        <button class="clear-btn" onclick="clearSavedData()" aria-label="Limpar todos os dados salvos">
+          🗑️ Limpar dados salvos
+        </button>
 
-        <div id="qaContainer">
-          <div class="qa-item">
-            <button class="remove-btn" onclick="removeQA(this)">×</button>
-            <div class="input-group">
-              <label>Pergunta</label>
-              <input
-                type="text"
-                class="question"
-                placeholder="Digite a pergunta"
-              />
-            </div>
-            <div class="input-group">
-              <label>Resposta</label>
-              <textarea
-                class="answer"
-                placeholder="Digite a resposta"
-              ></textarea>
-            </div>
-          </div>
+        <div id="qaContainer" role="list" aria-label="Lista de perguntas e respostas">
         </div>
 
-        <button class="add-btn" onclick="addQA()">➕ Adicionar Pergunta</button>
-      </div>
+        <button class="add-btn" onclick="addQA()" aria-label="Adicionar nova pergunta e resposta">
+          ➕ Adicionar Pergunta
+        </button>
+      </section>
 
-      <div class="preview">
-        <h3>Pré-visualização</h3>
+      <section class="preview" aria-label="Pré-visualização e código">
+        <h2>Pré-visualização</h2>
         <script src="faq-widget.js"></script>
         <div id="preview"></div>
 
-        <h3 style="margin-top: 2rem">Código para Embedar</h3>
+        <h2 style="margin-top: 2rem">Código para Embedar</h2>
+        <p class="embed-hint">
+          Cole este código em qualquer página HTML. O widget inclui
+          <strong>schema FAQPage</strong> para melhorar o SEO do seu site.
+        </p>
         <div class="copy-code">
-          <button id="copyBtn" onclick="copyCode()">📋 Copiar Código</button>
+          <button id="copyBtn" onclick="copyCode()" aria-label="Copiar código de incorporação">
+            📋 Copiar Código
+          </button>
           <div class="code-snippet">
             <pre><code id="generatedCode"></code></pre>
           </div>
-          <p id="copyMessage" class="hidden">Código copiado!</p>
+          <p id="copyMessage" class="hidden" role="status">Código copiado!</p>
+        </div>
+      </section>
+    </main>
+
+    <section class="features" aria-label="Recursos do Fakly">
+      <h2>Por que usar o Fakly?</h2>
+      <div class="features-grid">
+        <article class="feature-card">
+          <h3>🚀 Rápido e Simples</h3>
+          <p>
+            Crie FAQs em segundos. Sem cadastro, sem instalação, sem
+            complicação. Basta digitar e copiar o código.
+          </p>
+        </article>
+        <article class="feature-card">
+          <h3>🔍 SEO Integrado</h3>
+          <p>
+            O widget gera automaticamente o schema
+            <strong>FAQPage</strong> (JSON-LD), ajudando suas perguntas a
+            aparecerem nos resultados do Google.
+          </p>
+        </article>
+        <article class="feature-card">
+          <h3>📱 100% Responsivo</h3>
+          <p>
+            Design que se adapta perfeitamente a qualquer tela — celular,
+            tablet ou desktop.
+          </p>
+        </article>
+        <article class="feature-card">
+          <h3>♿ Acessível</h3>
+          <p>
+            Construído com acessibilidade em mente: navegação por teclado,
+            atributos ARIA e semântica HTML correta.
+          </p>
+        </article>
+        <article class="feature-card">
+          <h3>🆓 Grátis e Open Source</h3>
+          <p>
+            Totalmente gratuito e de
+            <a href="https://github.com/misterioso013/fakly">código aberto</a>.
+            Use, modifique e contribua como quiser.
+          </p>
+        </article>
+        <article class="feature-card">
+          <h3>💾 Salvamento Automático</h3>
+          <p>
+            Seus dados são salvos automaticamente no navegador. Feche e volte
+            quando quiser — nada se perde.
+          </p>
+        </article>
       </div>
-    </div>
+    </section>
+
     <footer>
       <p>
         Criado com ❤️ por
         <a href="https://github.com/misterioso013/fakly">misterioso013</a>
+        — Ferramenta gratuita e open source para gerar FAQs.
       </p>
     </footer>
     <script src="main.js"></script>
