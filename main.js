@@ -9,37 +9,90 @@ function updatePreview() {
     }))
     .filter((q) => q.question && q.answer);
 
-  const code = `<script src="https://misterioso013.github.io/fakly/faq-widget.js"><\/script>
+  const schemaJson = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: data.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
+  const escapedTitle = title.replace(/"/g, "&quot;");
+  const escapedData = JSON.stringify(data).replace(/'/g, "\\'");
+  const schemaScript =
+    '<script type="application/ld+json">' +
+    JSON.stringify(schemaJson) +
+    "<\\/script>";
+
+  const code = `<!-- Fakly FAQ Widget - https://github.com/misterioso013/fakly -->
+${schemaScript}
+<script src="https://misterioso013.github.io/fakly/faq-widget.js"><\/script>
 <faq-widget
-  title="${title.replace(/"/g, "&quot;")}"
-  data='${JSON.stringify(data).replace(/'/g, "\\'")}'>
+  title="${escapedTitle}"
+  data='${escapedData}'>
 <\/faq-widget>`;
 
   document.getElementById("generatedCode").textContent = code;
-  document.getElementById("preview").innerHTML = code;
+
+  const previewCode = `<script src="faq-widget.js"><\/script>
+<faq-widget
+  title="${escapedTitle}"
+  data='${escapedData}'>
+<\/faq-widget>`;
+  document.getElementById("preview").innerHTML = previewCode;
 
   saveToLocalStorage();
+  updateQANumbers();
+}
+
+function updateQANumbers() {
+  const items = document.querySelectorAll(".qa-item");
+  items.forEach((item, i) => {
+    const numberEl = item.querySelector(".qa-number");
+    if (numberEl) {
+      numberEl.textContent = i + 1;
+    }
+  });
+}
+
+function createQAItemElement(question, answer) {
+  const qaItem = document.createElement("div");
+  qaItem.className = "qa-item";
+  qaItem.setAttribute("role", "listitem");
+  qaItem.innerHTML = `
+    <span class="qa-number" aria-hidden="true">0</span>
+    <button class="remove-btn" onclick="removeQA(this)" aria-label="Remover esta pergunta">×</button>
+    <div class="input-group">
+      <label>Pergunta</label>
+      <input type="text" class="question" placeholder="Digite a pergunta" value="${(question || "").replace(/"/g, "&quot;")}" oninput="updatePreview()">
+    </div>
+    <div class="input-group">
+      <label>Resposta</label>
+      <textarea class="answer" placeholder="Digite a resposta" oninput="updatePreview()">${answer || ""}</textarea>
+    </div>
+  `;
+  return qaItem;
 }
 
 function addQA() {
-  const qaItem = document.createElement("div");
-  qaItem.className = "qa-item";
-  qaItem.innerHTML = `
-                <button class="remove-btn" onclick="removeQA(this)">×</button>
-                <div class="input-group">
-                    <label>Pergunta</label>
-                    <input type="text" class="question" placeholder="Digite a pergunta" oninput="updatePreview()">
-                </div>
-                <div class="input-group">
-                    <label>Resposta</label>
-                    <textarea class="answer" placeholder="Digite a resposta" oninput="updatePreview()"></textarea>
-                </div>
-            `;
-  document.getElementById("qaContainer").appendChild(qaItem);
+  const container = document.getElementById("qaContainer");
+  const qaItem = createQAItemElement("", "");
+  container.appendChild(qaItem);
   updatePreview();
+  qaItem.querySelector(".question").focus();
 }
 
 function removeQA(btn) {
+  const container = document.getElementById("qaContainer");
+  const items = container.querySelectorAll(".qa-item");
+  if (items.length <= 1) {
+    return;
+  }
   btn.closest(".qa-item").remove();
   updatePreview();
   saveToLocalStorage();
@@ -57,9 +110,17 @@ function copyCode() {
         copyMessage.classList.add("hidden");
       }, 2000);
     })
-    .catch((err) => {
-      console.error("Erro ao copiar:", err);
-      alert("Não foi possível copiar o código");
+    .catch(() => {
+      const range = document.createRange();
+      range.selectNode(codeElement);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand("copy");
+      window.getSelection().removeAllRanges();
+      copyMessage.classList.remove("hidden");
+      setTimeout(() => {
+        copyMessage.classList.add("hidden");
+      }, 2000);
     });
 }
 
@@ -83,38 +144,22 @@ function saveToLocalStorage() {
 function loadFromLocalStorage() {
   const savedData = localStorage.getItem("faklyData");
   if (!savedData) {
-    // Se não houver dados salvos, criar um item QA vazio
     addQA();
     return;
   }
 
   const faqData = JSON.parse(savedData);
 
-  // Set title
   document.getElementById("faqTitle").value = faqData.title || "";
 
-  // Clear existing QA items
   const container = document.getElementById("qaContainer");
   container.innerHTML = "";
 
-  // Add saved QA items
-  if (faqData.items.length === 0) {
-    addQA(); // Adiciona um item vazio se não houver itens salvos
+  if (!faqData.items || faqData.items.length === 0) {
+    addQA();
   } else {
     faqData.items.forEach((item) => {
-      const qaItem = document.createElement("div");
-      qaItem.className = "qa-item";
-      qaItem.innerHTML = `
-        <button class="remove-btn" onclick="removeQA(this)">×</button>
-        <div class="input-group">
-          <label>Pergunta</label>
-          <input type="text" class="question" placeholder="Digite a pergunta" value="${item.question}" oninput="updatePreview()">
-        </div>
-        <div class="input-group">
-          <label>Resposta</label>
-          <textarea class="answer" placeholder="Digite a resposta" oninput="updatePreview()">${item.answer}</textarea>
-        </div>
-      `;
+      const qaItem = createQAItemElement(item.question, item.answer);
       container.appendChild(qaItem);
     });
   }
@@ -122,13 +167,11 @@ function loadFromLocalStorage() {
   updatePreview();
 }
 
-// Event listeners para atualização em tempo real
 document.getElementById("faqTitle").addEventListener("input", updatePreview);
 document.querySelectorAll("input, textarea").forEach((el) => {
   el.addEventListener("input", updatePreview);
 });
 
-// Carregar dados salvos quando a página iniciar
 document.addEventListener("DOMContentLoaded", () => {
   loadFromLocalStorage();
 });
@@ -139,7 +182,7 @@ function clearSavedData() {
     document.getElementById("faqTitle").value = "";
     const container = document.getElementById("qaContainer");
     container.innerHTML = "";
-    addQA(); // Adiciona um item vazio após limpar
+    addQA();
     updatePreview();
   }
 }
